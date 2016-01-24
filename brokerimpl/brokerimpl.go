@@ -62,7 +62,7 @@ func (brokerimpl *BrokerImpl) ForwardMessage(endpoint string, message *broker.Me
 	if err != nil {
 		return nil, err
 	}
-	resp, err := http.Post(endpoint, "application/json", bytes.NewBuffer(j))
+	resp, err := http.Post(endpoint+"/Message", "application/json", bytes.NewBuffer(j))
 	if err != nil {
 		return nil, err
 	}

@@ -29,37 +29,23 @@ func checkerror(err error) {
 }
 
 func main() {
-	log.Print("TTNRouter is ALIVE")
-	c := os.Getenv("TTNROUTER_DB")
-	//s, err := sql.Open("postgres", "postgres://user:password@server/ttn?sslmode=require")
+	log.Print("MYRouter is ALIVE")
+	c := os.Getenv("MYROUTER_DB")
+	//s, err := sql.Open("postgres", "postgres://user:password@server/db?sslmode=require")
 	s, err := sql.Open("postgres", c)
 	checkerror(err)
 
 	d := dalpsql.New(s)
-	//err = d.BeginTransaction()
-	//checkerror(err)
-	//b, err := d.GetBrokers() //(&dal.Broker{Name: "tester", Endpoint: "http://127.0.0.1:4333"})
-	//checkerror(err)
-	//err = d.CommitTransaction()
-	//checkerror(err)
-
-	//for _, value := range b {
-	//	fmt.Println(value.Name)
-	//}
 	bll := bllimpl.New(&d)
 	gw := gatewayimpl.New()
 	bro := brokerimpl.New()
-	l, err := bll.GetBrokers()
+	brokers, err := bll.GetBrokers()
 	checkerror(err)
-	ll := make([]string, 0)
-	for _, value := range l {
-		ll = append(ll, value.Endpoint)
+	brokerlist := make([]string, 0)
+	for _, value := range brokers {
+		brokerlist = append(brokerlist, value.Endpoint)
 	}
 
-	appx := make([]byte, 0)
-	e, err := bro.FindBrokerOnAppEUI(appx, ll)
-	checkerror(err)
-	log.Fatal(e)
 	ServerAddr, err := net.ResolveUDPAddr("udp", ":1700")
 	checkerror(err)
 
@@ -103,9 +89,9 @@ func main() {
 						joinrequest, err := lora.NewJoinRequest(data)
 						checkerror(err)
 						message := &broker.Message{addr.Network(), addr.String(), ServerAddr.Network(), ServerAddr.String(), value}
-						appeui, err := bro.FindBrokerOnAppEUI(joinrequest.GetAppEUI(), make([]string, 0))
+						endpoint, err := bro.FindBrokerOnAppEUI(joinrequest.GetAppEUI(), brokerlist)
 						checkerror(err)
-						responsemessage, err := bro.ForwardMessage(appeui, message)
+						responsemessage, err := bro.ForwardMessage(endpoint, message)
 						checkerror(err)
 						txpk, err := json.Marshal(responsemessage.Package)
 						gateway, err := bll.FindGateway(pd.GatewayMAC[:])
