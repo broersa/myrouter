@@ -10,12 +10,12 @@ import (
 	"os"
 
 	"github.com/broersa/lora"
+	"github.com/broersa/myrouter/bllimpl"
+	"github.com/broersa/myrouter/broker"
+	"github.com/broersa/myrouter/brokerimpl"
+	"github.com/broersa/myrouter/dalpsql"
+	"github.com/broersa/myrouter/gatewayimpl"
 	"github.com/broersa/semtech"
-	"github.com/broersa/ttnrouter/bllimpl"
-	"github.com/broersa/ttnrouter/broker"
-	"github.com/broersa/ttnrouter/brokerimpl"
-	"github.com/broersa/ttnrouter/dalpsql"
-	"github.com/broersa/ttnrouter/gatewayimpl"
 
 	// Database Driver
 
