@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/broersa/myrouter/gateway"
 	"github.com/broersa/semtech"
-	"github.com/broersa/ttnrouter/gateway"
 )
 
 type (

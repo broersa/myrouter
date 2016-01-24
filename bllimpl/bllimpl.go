@@ -3,8 +3,8 @@ package bllimpl
 import (
 	"net"
 
-	"github.com/broersa/ttnrouter/bll"
-	"github.com/broersa/ttnrouter/dal"
+	"github.com/broersa/myrouter/bll"
+	"github.com/broersa/myrouter/dal"
 )
 
 type (

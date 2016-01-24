@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/broersa/ttnrouter/broker"
+	"github.com/broersa/myrouter/broker"
 )
 
 type (

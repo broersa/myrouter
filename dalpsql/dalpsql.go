@@ -3,7 +3,7 @@ package dalpsql
 import (
 	"database/sql"
 
-	"github.com/broersa/ttnrouter/dal"
+	"github.com/broersa/myrouter/dal"
 )
 
 type (
