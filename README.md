@@ -1,2 +1,2 @@
-# ttnrouter
-TheThingsNetwork Router implementation
+# myrouter
+LoRaWAN Router implementation
