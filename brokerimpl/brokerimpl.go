@@ -2,6 +2,7 @@ package brokerimpl
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -23,7 +24,7 @@ func New() broker.Broker {
 
 func (brokerimpl *BrokerImpl) FindBrokerOnAppEUI(appeui []byte, brokers []string) (string, error) {
 	proc := func(ep string, c chan<- string) {
-		resp, err := http.Get(ep + "/HasApplication/test") //string(appeui))
+		resp, err := http.Get(ep + "/HasApplication/" + hex.EncodeToString(appeui))
 		if err != nil {
 			return
 		}

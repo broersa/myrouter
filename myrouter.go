@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -34,7 +35,6 @@ func main() {
 	//s, err := sql.Open("postgres", "postgres://user:password@server/db?sslmode=require")
 	s, err := sql.Open("postgres", c)
 	checkerror(err)
-
 	d := dalpsql.New(s)
 	bll := bllimpl.New(&d)
 	gw := gatewayimpl.New()
@@ -88,17 +88,22 @@ func main() {
 						fmt.Println("->JoinRequest")
 						joinrequest, err := lora.NewJoinRequest(data)
 						checkerror(err)
+						fmt.Println(hex.EncodeToString(joinrequest.GetAppEUI()))
+						fmt.Println(hex.EncodeToString(joinrequest.GetDevEUI()))
 						message := &broker.Message{addr.Network(), addr.String(), ServerAddr.Network(), ServerAddr.String(), value}
 						endpoint, err := bro.FindBrokerOnAppEUI(joinrequest.GetAppEUI(), brokerlist)
-						checkerror(err)
-						responsemessage, err := bro.ForwardMessage(endpoint, message)
-						checkerror(err)
-						txpk, err := json.Marshal(responsemessage.Package)
-						gateway, err := bll.FindGateway(pd.GatewayMAC[:])
-						checkerror(err)
-						err = gw.SendPullResp(ServerConn, gateway, pd.ProtocolVersion, pd.RandomToken, string(txpk))
-						checkerror(err)
-						fmt.Println("<-JoinAccept")
+						if err != nil {
+							log.Print(err)
+						} else {
+							responsemessage, err := bro.ForwardMessage(endpoint, message)
+							checkerror(err)
+							txpk, err := json.Marshal(responsemessage.Package)
+							gateway, err := bll.FindGateway(pd.GatewayMAC[:])
+							checkerror(err)
+							err = gw.SendPullResp(ServerConn, gateway, pd.ProtocolVersion, pd.RandomToken, string(txpk))
+							checkerror(err)
+							fmt.Println("<-JoinAccept")
+						}
 					}
 				}
 			}
