@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/broersa/lora"
+	"github.com/broersa/mylog"
 	"github.com/broersa/myrouter/bllimpl"
 	"github.com/broersa/myrouter/broker"
 	"github.com/broersa/myrouter/brokerimpl"
@@ -30,18 +31,18 @@ func checkerror(err error) {
 }
 
 func main() {
-	log.Print("MYRouter is ALIVE")
+	mylog.Info.Println("MyRouter is alive")
 	c := os.Getenv("MYROUTER_DB")
 	//s, err := sql.Open("postgres", "postgres://user:password@server/db?sslmode=require")
 	s, err := sql.Open("postgres", c)
 	checkerror(err)
-	d := dalpsql.New(s)
-	bll := bllimpl.New(&d)
+	d := dalpsql.NewFactory(s)
+	bll := bllimpl.NewBll(&d)
 	gw := gatewayimpl.New()
 	bro := brokerimpl.New()
 	brokers, err := bll.GetBrokers()
 	checkerror(err)
-	brokerlist := make([]string, 0)
+	var brokerlist []string
 	for _, value := range brokers {
 		brokerlist = append(brokerlist, value.Endpoint)
 	}
@@ -90,7 +91,7 @@ func main() {
 						checkerror(err)
 						fmt.Println(hex.EncodeToString(joinrequest.GetAppEUI()))
 						fmt.Println(hex.EncodeToString(joinrequest.GetDevEUI()))
-						message := &broker.Message{addr.Network(), addr.String(), ServerAddr.Network(), ServerAddr.String(), value}
+						message := &broker.Message{OriginUDPAddrNetwork: addr.Network(), OriginUDPAddrString: addr.String(), ReturnUDPAddrNetwork: ServerAddr.Network(), ReturnUDPAddrString: ServerAddr.String(), Package: value}
 						endpoint, err := bro.FindBrokerOnAppEUI(joinrequest.GetAppEUI(), brokerlist)
 						if err != nil {
 							log.Print(err)
